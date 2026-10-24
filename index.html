@@ -1,0 +1,633 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainful Hub - Course Registration</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      color: #1f2937;
+      font-size: 14px;
+    }
+
+    /* Header */
+    header {
+      background: #087bd3;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 5px #0002;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border: 1px solid white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    /* Registration form */
+    .container {
+      width: 100%;
+      max-width: 490px;
+      margin: 28px auto;
+      padding: 0 16px 30px;
+    }
+
+    .field {
+      margin-bottom: 19px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 40px;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      color: #374151;
+      font-size: 13px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #087bd3;
+      box-shadow: 0 0 0 2px #087bd322;
+    }
+
+    input::placeholder {
+      color: #a1a1aa;
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .phone-input {
+      display: flex;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .phone-input span {
+      padding: 11px 9px;
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .phone-input input {
+      border: none;
+      min-width: 0;
+      border-radius: 0;
+    }
+
+    /* Searchable university list */
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      border: none;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .university-list {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: white;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    .university-option {
+      padding: 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .university-option:hover {
+      background: #eff6ff;
+      color: #087bd3;
+    }
+
+    .university-option.selected {
+      background: #eaf4ff;
+      color: #087bd3;
+    }
+
+    .selected-university {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #087bd3;
+    }
+
+    /* Payment information */
+    .payment-title {
+      margin: 28px 0 12px;
+      font-size: 17px;
+    }
+
+    .payment-description {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .payment-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 9px;
+      padding: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .payment-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e7f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 17px;
+    }
+
+    .payment-card strong {
+      font-size: 13px;
+    }
+
+    .payment-card p {
+      margin: 5px 0 0;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .account-number {
+      color: #087bbd;
+      font-weight: 600;
+    }
+
+    /* Receipt upload */
+    .upload-box {
+      border: 1px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 24px 12px;
+      text-align: center;
+      background: white;
+      margin: 18px 0;
+    }
+
+    .upload-icon {
+      font-size: 30px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .upload-box p {
+      font-size: 12px;
+      margin: 5px 0;
+    }
+
+    .upload-box small {
+      color: #9ca3af;
+    }
+
+    .file-input {
+      margin-top: 12px;
+      border: none;
+      font-size: 12px;
+      padding: 0;
+      min-height: auto;
+    }
+
+    /* Register button */
+    .register-button {
+      width: 100%;
+      background: #087bd3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px #0002;
+    }
+
+    .register-button:hover {
+      background: #0669b5;
+    }
+
+    .register-button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    #message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 380px) {
+      .two-columns {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">BRAIN<br>FUL HUB</div>
+    <div>
+      <h2>Brainful Hub</h2>
+      <p>Course Registration</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <form id="registrationForm">
+
+      <div class="field">
+        <label for="fullName">Full Name *</label>
+        <input
+          id="fullName"
+          name="fullName"
+          type="text"
+          placeholder="Full Name"
+          autocomplete="name"
+          required
+        >
+      </div>
+
+      <div class="two-columns">
+
+        <div class="field">
+          <label for="email">Email *</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone Number *</label>
+          <div class="phone-input">
+            <span>+251</span>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="9XXXXXXXX"
+              inputmode="numeric"
+              pattern="9[0-9]{8}"
+              maxlength="9"
+              required
+            >
+          </div>
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label for="telegram">Telegram Username</label>
+        <input
+          id="telegram"
+          name="telegram"
+          type="text"
+          placeholder="@username"
+        >
+      </div>
+
+      <div class="field">
+        <label>Where are you currently enrolled in?</label>
+
+        <div class="search-box">
+          <input
+            id="universitySearch"
+            type="search"
+            placeholder="⌕   Search university"
+            autocomplete="off"
+          >
+        </div>
+
+        <div
+          class="university-list"
+          id="universityList"
+          role="listbox"
+          aria-label="Universities"
+        ></div>
+
+        <input
+          type="hidden"
+          id="university"
+          name="university"
+          value=""
+        >
+
+        <div
+          id="selectedUniversity"
+          class="selected-university"
+          aria-live="polite"
+        ></div>
+      </div>
+
+      <div class="field">
+        <label for="course">Course Name</label>
+        <select id="course" name="course" required>
+          <option value="Applied Mathematics & C++ Programming Bundle">
+            Applied Mathematics &amp; C++ Programming Bundle (ETB 100)
+          </option>
+        </select>
+      </div>
+
+      <h3 class="payment-title">Payment Info (ETB 100)</h3>
+
+      <p class="payment-description">
+        Complete payment to the account below and upload the
+        payment receipt.
+      </p>
+
+      <div class="payment-card">
+        <div class="payment-icon">🏦</div>
+        <div>
+          <strong>CBE (Commercial Bank of Ethiopia)</strong>
+          <p>Account Holder: Henok Desta</p>
+          <p>
+            Account Number:
+            <span class="account-number">1000644137318</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="payment-card">
+        <div class="payment-icon">📱</div>
+        <div>
+          <strong>TeleBirr</strong>
+          <p>Account Holder: Henok Desta</p>
+          <p>
+            Account Number:
+            <span class="account-number">0930695142</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="upload-box">
+        <div class="upload-icon">⇧</div>
+        <p>Choose a file or drag and drop</p>
+        <small>Payment receipt image (maximum 8 MB)</small>
+
+        <input
+          class="file-input"
+          type="file"
+          id="receipt"
+          name="receipt"
+          accept="image/jpeg,image/png,image/webp"
+          required
+        >
+
+        <p id="fileName" aria-live="polite"></p>
+      </div>
+
+      <button class="register-button" type="submit">
+        Register Now
+      </button>
+
+      <div id="message" role="status" aria-live="polite"></div>
+
+    </form>
+
+  </main>
+
+  <script>
+    // University options
+    const universities = [
+      "Not Joined yet",
+      "Adama Science and Technology University",
+      "Addis Ababa Science and Technology University",
+      "Addis Ababa University",
+      "Adigrat University",
+      "Ambo University",
+      "Arba Minch University",
+      "Arsi University",
+      "Assosa University",
+      "Axum University",
+      "Bahir Dar University",
+      "Bonga University",
+      "Debre Berhan University",
+      "Debre Markos University",
+      "Dilla University",
+      "Dire Dawa University",
+      "Ethiopian Civil Service University",
+      "Haramaya University",
+      "Hawassa University",
+      "Injibara University",
+      "Jimma University",
+      "Jigjiga University",
+      "Kotebe University of Education",
+      "Madda Walabu University",
+      "Mekelle University",
+      "Mettu University",
+      "Oda Bultum University",
+      "Raya University",
+      "Salale University",
+      "Samara University",
+      "Wachemo University",
+      "Welkite University",
+      "Woldia University",
+      "Wolaita Sodo University",
+      "Wollega University",
+      "Other"
+    ];
+
+    const searchInput =
+      document.getElementById("universitySearch");
+
+    const universityList =
+      document.getElementById("universityList");
+
+    const universityInput =
+      document.getElementById("university");
+
+    const selectedUniversity =
+      document.getElementById("selectedUniversity");
+
+    let currentSelection = "";
+
+    function renderUniversities(query = "") {
+      universityList.replaceChildren();
+
+      const filtered = universities.filter(name =>
+        name.toLowerCase().includes(query.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "university-option";
+        empty.textContent = "No university found";
+        universityList.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach(name => {
+        const option = document.createElement("div");
+
+        option.className = "university-option";
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected",
+          String(name === currentSelection));
+        option.textContent = name;
+
+        if (name === currentSelection) {
+          option.classList.add("selected");
+        }
+
+        option.addEventListener("click", () => {
+          currentSelection = name;
+          universityInput.value = name;
+
+          selectedUniversity.textContent =
+            "Selected: " + name;
+
+          searchInput.value = "";
+          renderUniversities();
+        });
+
+        universityList.appendChild(option);
+      });
+    }
+
+    searchInput.addEventListener("input", event => {
+      renderUniversities(event.target.value);
+    });
+
+    renderUniversities();
+
+    // Receipt upload validation
+    const receiptInput = document.getElementById("receipt");
+    const fileName = document.getElementById("fileName");
+
+    receiptInput.addEventListener("change", () => {
+      const file = receiptInput.files[0];
+
+      if (!file) {
+        fileName.textContent = "";
+        return;
+      }
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please upload a JPG, PNG, or WebP image.");
+        receiptInput.value = "";
+        fileName.textContent = "";
+        return;
+      }
+
+      if (file.size > 8 * 1024 * 1024) {
+        alert("The receipt image must be 8 MB or smaller.");
+        receiptInput.value = "";
+        fileName.textContent = "";
+        return;
+      }
+
+      fileName.textContent = "Selected: " + file.name;
+    });
+
+    // Registration form
+    document.getElementById("registrationForm")
+      .addEventListener("submit", event => {
+        event.preventDefault();
+
+        const message = document.getElementById("message");
+        const form = event.currentTarget;
+
+        if (!universityInput.value) {
+          message.style.display = "block";
+          message.textContent =
+            "Please select your university.";
+          searchInput.focus();
+          return;
+        }
+
+        if (!form.reportValidity()) {
+          return;
+        }
+
+        message.style.display = "block";
+        message.textContent =
+          "Your form is ready, but registration has not been submitted. " +
+          "Connect a secure backend to save your details and upload " +
+          "the payment receipt.";
+
+        message.style.background = "#fff7ed";
+        message.style.color = "#9a3412";
+      });
+  </script>
+
+</body>
+</html>
