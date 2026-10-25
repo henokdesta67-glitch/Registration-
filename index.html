@@ -459,175 +459,259 @@
 
   </main>
 
-  <script>
-    // University options
-    const universities = [
-      "Not Joined yet",
-      "Adama Science and Technology University",
-      "Addis Ababa Science and Technology University",
-      "Addis Ababa University",
-      "Adigrat University",
-      "Ambo University",
-      "Arba Minch University",
-      "Arsi University",
-      "Assosa University",
-      "Axum University",
-      "Bahir Dar University",
-      "Bonga University",
-      "Debre Berhan University",
-      "Debre Markos University",
-      "Dilla University",
-      "Dire Dawa University",
-      "Ethiopian Civil Service University",
-      "Haramaya University",
-      "Hawassa University",
-      "Injibara University",
-      "Jimma University",
-      "Jigjiga University",
-      "Kotebe University of Education",
-      "Madda Walabu University",
-      "Mekelle University",
-      "Mettu University",
-      "Oda Bultum University",
-      "Raya University",
-      "Salale University",
-      "Samara University",
-      "Wachemo University",
-      "Welkite University",
-      "Woldia University",
-      "Wolaita Sodo University",
-      "Wollega University",
-      "Other"
-    ];
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    const searchInput =
-      document.getElementById("universitySearch");
+<script>
+const SUPABASE_URL = "https://bkysiuwbgjqqzrebiysg.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_vikB73UPnk8QpoCYnhFknw_P6bZYB-C";
 
-    const universityList =
-      document.getElementById("universityList");
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-    const universityInput =
-      document.getElementById("university");
+const universities = [
+  "Not Joined yet",
+  "Adama Science and Technology University",
+  "Addis Ababa Science and Technology University",
+  "Addis Ababa University",
+  "Adigrat University",
+  "Ambo University",
+  "Arba Minch University",
+  "Arsi University",
+  "Assosa University",
+  "Axum University",
+  "Bahir Dar University",
+  "Bonga University",
+  "Debre Berhan University",
+  "Debre Markos University",
+  "Dilla University",
+  "Dire Dawa University",
+  "Ethiopian Civil Service University",
+  "Haramaya University",
+  "Hawassa University",
+  "Injibara University",
+  "Jimma University",
+  "Jigjiga University",
+  "Kotebe University of Education",
+  "Madda Walabu University",
+  "Mekelle University",
+  "Mettu University",
+  "Oda Bultum University",
+  "Raya University",
+  "Salale University",
+  "Samara University",
+  "Wachemo University",
+  "Welkite University",
+  "Woldia University",
+  "Wolaita Sodo University",
+  "Wollega University",
+  "Other"
+];
 
-    const selectedUniversity =
-      document.getElementById("selectedUniversity");
+const searchInput = document.getElementById("universitySearch");
+const universityList = document.getElementById("universityList");
+const universityInput = document.getElementById("university");
+const selectedUniversity = document.getElementById("selectedUniversity");
+const receiptInput = document.getElementById("receipt");
+const fileName = document.getElementById("fileName");
+const form = document.getElementById("registrationForm");
+const message = document.getElementById("message");
+const submitButton = form.querySelector('button[type="submit"]');
 
-    let currentSelection = "";
+let currentSelection = "";
 
-    function renderUniversities(query = "") {
-      universityList.replaceChildren();
+function renderUniversities(query = "") {
+  universityList.replaceChildren();
 
-      const filtered = universities.filter(name =>
-        name.toLowerCase().includes(query.toLowerCase())
-      );
+  const filtered = universities.filter(name =>
+    name.toLowerCase().includes(query.toLowerCase())
+  );
 
-      if (filtered.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "university-option";
-        empty.textContent = "No university found";
-        universityList.appendChild(empty);
-        return;
-      }
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "university-option";
+    empty.textContent = "No university found";
+    universityList.appendChild(empty);
+    return;
+  }
 
-      filtered.forEach(name => {
-        const option = document.createElement("div");
+  filtered.forEach(name => {
+    const option = document.createElement("div");
+    option.className = "university-option";
+    option.textContent = name;
+    option.setAttribute("role", "option");
 
-        option.className = "university-option";
-        option.setAttribute("role", "option");
-        option.setAttribute("aria-selected",
-          String(name === currentSelection));
-        option.textContent = name;
-
-        if (name === currentSelection) {
-          option.classList.add("selected");
-        }
-
-        option.addEventListener("click", () => {
-          currentSelection = name;
-          universityInput.value = name;
-
-          selectedUniversity.textContent =
-            "Selected: " + name;
-
-          searchInput.value = "";
-          renderUniversities();
-        });
-
-        universityList.appendChild(option);
-      });
+    if (name === currentSelection) {
+      option.classList.add("selected");
+      option.setAttribute("aria-selected", "true");
     }
 
-    searchInput.addEventListener("input", event => {
-      renderUniversities(event.target.value);
+    option.addEventListener("click", () => {
+      currentSelection = name;
+      universityInput.value = name;
+      selectedUniversity.textContent = "Selected: " + name;
+      searchInput.value = "";
+      renderUniversities();
     });
 
+    universityList.appendChild(option);
+  });
+}
+
+searchInput.addEventListener("input", event => {
+  renderUniversities(event.target.value);
+});
+
+renderUniversities();
+
+receiptInput.addEventListener("change", () => {
+  const file = receiptInput.files[0];
+
+  fileName.textContent = "";
+
+  if (!file) return;
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    alert("Please choose a JPG, PNG, or WebP image.");
+    receiptInput.value = "";
+    return;
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    alert("The receipt image must be 8 MB or smaller.");
+    receiptInput.value = "";
+    return;
+  }
+
+  fileName.textContent = "Selected: " + file.name;
+});
+
+function showMessage(text, success = false) {
+  message.style.display = "block";
+  message.textContent = text;
+  message.style.background = success ? "#dcfce7" : "#fff7ed";
+  message.style.color = success ? "#166534" : "#9a3412";
+}
+
+async function postJSON(url, data) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(result.error || "Request failed.");
+  }
+
+  return result;
+}
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!universityInput.value) {
+    showMessage("Please select your university.");
+    searchInput.focus();
+    return;
+  }
+
+  if (!form.reportValidity()) return;
+
+  const receipt = receiptInput.files[0];
+
+  if (!receipt) {
+    showMessage("Please upload your payment receipt.");
+    return;
+  }
+
+  if (receipt.size > 8 * 1024 * 1024) {
+    showMessage("The receipt must be 8 MB or smaller.");
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+  message.style.display = "none";
+
+  try {
+    // 1. Ask the backend for permission to upload the receipt.
+    const uploadInfo = await postJSON("/api/create-upload-url", {
+      fileName: receipt.name,
+      contentType: receipt.type,
+      size: receipt.size
+    });
+
+    if (!uploadInfo.path || !uploadInfo.token) {
+      throw new Error("Could not prepare the receipt upload.");
+    }
+
+    // 2. Upload the receipt to the private Supabase bucket.
+    const { error: uploadError } = await db.storage
+      .from("payment-receipts")
+      .uploadToSignedUrl(
+        uploadInfo.path,
+        uploadInfo.token,
+        receipt,
+        { contentType: receipt.type }
+      );
+
+    if (uploadError) {
+      throw new Error("Receipt upload failed. Please try again.");
+    }
+
+    // 3. Submit student details and the receipt path.
+    const result = await postJSON("/api/register", {
+      fullName: document.getElementById("fullName").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      telegram: document.getElementById("telegram").value.trim(),
+      university: universityInput.value,
+      course: document.getElementById("course").value,
+      receiptPath: uploadInfo.path
+    });
+
+    if (!result.success) {
+      throw new Error(result.error || "Registration failed.");
+    }
+
+    showMessage(
+      result.message ||
+      "Registration submitted. Your payment is pending verification.",
+      true
+    );
+
+    form.reset();
+    currentSelection = "";
+    universityInput.value = "";
+    selectedUniversity.textContent = "";
+    fileName.textContent = "";
     renderUniversities();
 
-    // Receipt upload validation
-    const receiptInput = document.getElementById("receipt");
-    const fileName = document.getElementById("fileName");
-
-    receiptInput.addEventListener("change", () => {
-      const file = receiptInput.files[0];
-
-      if (!file) {
-        fileName.textContent = "";
-        return;
-      }
-
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
-        alert("Please upload a JPG, PNG, or WebP image.");
-        receiptInput.value = "";
-        fileName.textContent = "";
-        return;
-      }
-
-      if (file.size > 8 * 1024 * 1024) {
-        alert("The receipt image must be 8 MB or smaller.");
-        receiptInput.value = "";
-        fileName.textContent = "";
-        return;
-      }
-
-      fileName.textContent = "Selected: " + file.name;
-    });
-
-    // Registration form
-    document.getElementById("registrationForm")
-      .addEventListener("submit", event => {
-        event.preventDefault();
-
-        const message = document.getElementById("message");
-        const form = event.currentTarget;
-
-        if (!universityInput.value) {
-          message.style.display = "block";
-          message.textContent =
-            "Please select your university.";
-          searchInput.focus();
-          return;
-        }
-
-        if (!form.reportValidity()) {
-          return;
-        }
-
-        message.style.display = "block";
-        message.textContent =
-          "Your form is ready, but registration has not been submitted. " +
-          "Connect a secure backend to save your details and upload " +
-          "the payment receipt.";
-
-        message.style.background = "#fff7ed";
-        message.style.color = "#9a3412";
-      });
-  </script>
+  } catch (error) {
+    console.error("Registration error:", error);
+    showMessage(
+      error.message ||
+      "Submission failed. Please check your internet and try again."
+    );
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Register Now";
+  }
+});
+</script>
 
 </body>
 </html>
